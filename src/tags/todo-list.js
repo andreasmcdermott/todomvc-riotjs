@@ -7,7 +7,7 @@ const headerCss = sf`
     padding: 0 0.5em;
   }
 
-  [type=text] {
+  :host [type=text] {
     width: calc(100% - 2em);
     margin-left: 2em;
     padding: 1em 0;
@@ -28,13 +28,13 @@ const sectionCss = sf`
     top: -3em;
   }
 
-  ul {
+  :host ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
   }
 
-  li {
+  :host li {
     position: relative;
     padding: 0.5em 0;
   }
@@ -46,22 +46,22 @@ const footerCss = sf`
     padding: 0.5em;
   }
 
-  .filters {
+  :host .filters {
     width: 40%;
     margin: 0 auto;
   }
 
-  .filter {
+  :host .filter {
     display: inline-block;
     padding: 0.2em;
   }
 
-  .remainingCount {
+  :host .remainingCount {
     padding: 0.2em;
     float: left;
   }
 
-  .clearCompleted {
+  :host .clearCompleted {
     padding: 0.2em;
     float: right;
   }
