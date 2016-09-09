@@ -2,11 +2,11 @@
 'use strict';
 
 var riot = require('riot');
-var todoList = require('./tags/todo-list.js');
+var store = require('./src/store');
+var todoList = require('./src/tags/todo-list');
+riot.mount(todoList, { store: store });
 
-riot.mount(todoList);
-
-},{"./tags/todo-list.js":6,"riot":3}],2:[function(require,module,exports){
+},{"./src/store":4,"./src/tags/todo-list":6,"riot":3}],2:[function(require,module,exports){
 var containers = []; // will store container HTMLElement references
 var styleElements = []; // will store {prepend: HTMLElement, append: HTMLElement}
 
@@ -2747,33 +2747,35 @@ var sf = 0;
 
 var css = (require('insert-css')("._1d0567c6 [type=checkbox] {\n    position: absolute;\n    left: 0;\n  }\n\n  ._1d0567c6 [type=text] {\n    width: calc(100% - 4em);\n    border: none;\n    display: inline-block;\n    margin-left: 2em;\n    font-size: 1em;\n    padding: 0;\n  }\n\n  ._1d0567c6 label {\n    width: calc(100% - 2em);\n    margin-left: 2em;\n    display: inline-block;\n  }\n\n  ._1d0567c6 label.completed {\n    text-decoration: line-through;\n  }") || true) && "_1d0567c6";
 
-module.exports = riot.tag('todo-item', '\n<div class="' + css + '">\n  <input type="checkbox" checked="{item.completed}" onclick="{complete}" />\n  <label hide="{editing}" ondblclick="{edit}" class="{completed: item.completed}">{item.title}</label>\n  <input show="{editing}" name="editInput" type="text" value="{item.title}" onkeyup="{onEdit}" />\n</div>\n', function (opts) {
+module.exports = riot.tag('todo-item', '\n<div class="' + css + '">\n  <input type="checkbox" __checked="{item.completed}" onclick="{onToggleComplete}" />\n  <label hide="{editing}" ondblclick="{onStartEdit}" class="{completed: item.completed}">{item.title}</label>\n  <input show="{editing}" name="editInput" type="text" value="{item.title}" onkeyup="{onEditKeyup}" />\n</div>\n', function (opts) {
   var _this = this;
 
-  this.dispatcher = opts.dispatcher;
   this.item = opts.item;
   this.editing = false;
 
-  this.complete = function (e) {
+  this.onToggleComplete = function (e) {
     _this.item.completed = e.target.checked;
-    _this.dispatcher.trigger('todo:updated', _this.item);
+    opts.dispatcher.trigger('todo-item:updated', _this.item);
   };
 
-  this.edit = function (e) {
+  this.onStartEdit = function (e) {
     e.preventDefault();
     _this.editing = true;
     _this.originalTitle = _this.item.title;
     _this.editInput.focus();
   };
 
-  this.onEdit = function (e) {
-    if (e.which === 27) {
+  var KEY_ESC = 27;
+  var KEY_RETURN = 13;
+
+  this.onEditKeyup = function (e) {
+    if (e.which === KEY_ESC) {
       _this.item.title = _this.originalTitle;
       _this.editing = false;
-    } else if (e.which === 13) {
+    } else if (e.which === KEY_RETURN) {
       _this.item.title = e.target.value.trim();
       _this.editing = false;
-      _this.dispatcher.trigger('todo:updated');
+      opts.dispatcher.trigger('todo-item:updated');
     }
   };
 });
@@ -2782,36 +2784,30 @@ module.exports = riot.tag('todo-item', '\n<div class="' + css + '">\n  <input ty
 'use strict';
 
 var riot = require('riot');
-var todoItem = require('./todo-item.js');
 var sf = 0;
-var store = require('../store.js');
+var todoItem = require('./todo-item.js');
 
 var headerCss = (require('insert-css')("._a0d4375b {\n    padding: 0 0.5em;\n  }\n\n  ._a0d4375b [type=text] {\n    width: calc(100% - 2em);\n    margin-left: 2em;\n    padding: 1em 0;\n    border: none;\n    font-size: 1em;\n  }") || true) && "_a0d4375b";
 
-var sectionCss = (require('insert-css')("._c20e5783 {\n    padding: 0 0.5em;\n    position: relative;\n    background-color: white;\n  }") || true) && "_c20e5783";
+var sectionCss = (require('insert-css')("._aae4ced3 {\n    padding: 0 0.5em;\n    position: relative;\n    background-color: white;\n  }\n\n  ._aae4ced3 > [type=checkbox] {\n    position: absolute;\n    top: -3em;\n  }\n\n  ._aae4ced3 ul {\n    list-style-type: none;\n    padding: 0;\n    margin: 0;\n  }\n\n  ._aae4ced3 li {\n    position: relative;\n    padding: 0.5em 0;\n  }") || true) && "_aae4ced3";
 
-var completeAllCss = (require('insert-css')("._fa403613 {\n    position: absolute;\n    top: -3em;\n  }") || true) && "_fa403613";
+var footerCss = (require('insert-css')("._b13af08e {\n    font-size: 0.8em;\n    padding: 0.5em;\n  }\n\n  ._b13af08e .filters {\n    width: 40%;\n    margin: 0 auto;\n  }\n\n  ._b13af08e .filter {\n    display: inline-block;\n    padding: 0.2em;\n  }\n\n  ._b13af08e .remainingCount {\n    padding: 0.2em;\n    float: left;\n  }\n\n  ._b13af08e .clearCompleted {\n    padding: 0.2em;\n    float: right;\n  }") || true) && "_b13af08e";
 
-var listCss = (require('insert-css')("._1d35d66a {\n    list-style-type: none;\n    padding: 0;\n    margin: 0;\n  }\n\n  ._1d35d66a li {\n    position: relative;\n    padding: 0.5em 0;\n  }") || true) && "_1d35d66a";
-
-var footerCss = (require('insert-css')("._c57da02c {\n    font-size: 0.8em;\n    padding: 0.5em;\n  }\n\n  ._c57da02c .filters {\n    width: 40%;\n    margin: 0 auto;\n  }\n\n  ._c57da02c .filter {\n    display: inline-block;\n    padding: 0.2em;\n  }\n\n  ._c57da02c .count {\n    padding: 0.2em;\n    float: left;\n  }\n\n  ._c57da02c .clearCompleted {\n    padding: 0.2em;\n    float: right;\n  }") || true) && "_c57da02c";
-
-module.exports = riot.tag('todo-list', '\n<header class="' + headerCss + '">\n  <form onsubmit="{add}">\n    <input id="newTodo" type="text" placeholder="What needs to be done?" autofocus />\n  </form>\n</header>\n<section if="{items.length}" class="' + sectionCss + '">\n  <input type="checkbox" __checked="{allCompleted()}" onclick="{completeAll}" class="' + completeAllCss + '" />\n  <ul class="' + listCss + '">\n    <li each="{item in filteredItems()}">\n      <todo-item item="{item}" dispatcher="{parent.dispatcher}"></todo-item>\n    </li>\n  </ul>\n</section>\n<footer if="{items.length}" class="' + footerCss + '">\n  <span class="count">{countUncompleted()} item{countUncompleted() !== 1 ? \'s\' : \'\'} left</span>\n  <a href="#" onclick="{clearCompleted}" class="clearCompleted">Clear completed</a>\n  <div class="filters">\n    <a each="{key, filter in filters}" href="/#/{key}" class="filter {active: activeFilter == key}">{filter.title}</a>\n  </div>\n</footer>\n', function (opts) {
+module.exports = riot.tag('todo-list', '\n<header class="' + headerCss + '">\n  <form onsubmit="{onAddItem}">\n    <input id="newTodoTitle" type="text" placeholder="What needs to be done?" autofocus />\n  </form>\n</header>\n<section if="{items.length}" class="' + sectionCss + '">\n  <input type="checkbox" __checked="{areAllCompleted()}" onclick="{onToggleAllCompleted}" />\n  <ul>\n    <li each="{item in filteredItems()}">\n      <todo-item item="{item}" dispatcher="{parent.dispatcher}"></todo-item>\n    </li>\n  </ul>\n</section>\n<footer if="{items.length}" class="' + footerCss + '">\n  <span class="remainingCount">{countUncompleted()} item{countUncompleted() !== 1 ? \'s\' : \'\'} left</span>\n  <a href="#" onclick="{onClearCompleted}" class="clearCompleted">Clear completed</a>\n  <div class="filters">\n    <a each="{key, filter in filters}" href="/#/{key}" class="filter {active: activeFilter === key}">{filter.title}</a>\n  </div>\n</footer>\n', function (opts) {
   var _this = this;
 
   riot.route(function (filter) {
-    _this.activeFilter = filter || 'all';
+    _this.activeFilter = _this.filters.hasOwnProperty(filter) ? filter : 'all';
     _this.update();
   });
-
   riot.route.start(true);
 
   this.dispatcher = riot.observable();
-  this.dispatcher.on('todo:updated', function (_) {
-    store.save(_this.items);
+  this.dispatcher.on('todo-item:updated', function (_) {
+    opts.store.save(_this.items);
   });
 
-  this.items = store.fetch();
+  this.items = opts.store.fetch();
   this.filters = {
     all: { func: function func(items) {
         return items;
@@ -2829,14 +2825,11 @@ module.exports = riot.tag('todo-list', '\n<header class="' + headerCss + '">\n  
   };
   this.activeFilter = null;
 
-  this.setFilter = function (filter) {
-    _this.activeFilter = filter;
-  };
   this.filteredItems = function (_) {
     return _this.filters[_this.activeFilter].func(_this.items);
   };
 
-  this.allCompleted = function (_) {
+  this.areAllCompleted = function (_) {
     return _this.items.every(function (item) {
       return item.completed;
     });
@@ -2847,28 +2840,29 @@ module.exports = riot.tag('todo-list', '\n<header class="' + headerCss + '">\n  
     }).length;
   };
 
-  this.completeAll = function (e) {
+  this.onToggleAllCompleted = function (e) {
     _this.items.forEach(function (item) {
       item.completed = e.target.checked;
     });
   };
 
-  this.clearCompleted = function (e) {
+  this.onClearCompleted = function (e) {
     e.preventDefault();
     _this.items = _this.filters.active.func(_this.items);
   };
 
-  this.add = function (e) {
+  this.onAddItem = function (e) {
     e.preventDefault();
-    if (_this.newTodo.value) {
+    var title = _this.newTodoTitle.value.trim();
+    if (title) {
       _this.items.push({
-        title: _this.newTodo.value.trim(),
+        title: title,
         completed: false
       });
-      store.save(_this.items);
+      opts.store.save(_this.items);
       e.target.reset();
     }
   };
 });
 
-},{"../store.js":4,"./todo-item.js":5,"insert-css":2,"riot":3}]},{},[1]);
+},{"./todo-item.js":5,"insert-css":2,"riot":3}]},{},[1]);

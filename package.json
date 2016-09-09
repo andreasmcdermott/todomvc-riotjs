@@ -1,16 +1,23 @@
 {
   "name": "todomvc-riotjs",
   "version": "1.0.0",
-  "description": "TodoMVC app using Riot JS",
+  "description": "TodoMVC-like app using Riot JS",
+  "repository": { 
+    "type": "git", 
+    "url": "https://github.com/andreasmcdermott/todomvc-riotjs.git" 
+  },
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "todomvc",
+    "todo",
+    "riot",
     "riotjs"
   ],
-  "author": "Andreas McDermott",
+  "author": "Andreas McDermott <andreasmcdermott@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "babel-preset-es2015": "^6.14.0",

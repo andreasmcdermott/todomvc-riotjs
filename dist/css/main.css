@@ -1,0 +1,64 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  background-color: #EEEEEE;
+  color: #222222;
+}
+
+h1 {
+  text-align: center;
+}
+
+.about {
+  font-size: 0.5em;
+  text-align: center;
+}
+
+todo-list {
+  width: 400px;
+  margin: 0 auto;
+  display: block;
+  border: 1px solid #DDDDDD;
+}
+
+todo-list header, 
+todo-list footer {
+  background-color: white;
+}
+
+todo-list header {
+  border-bottom: 1px solid #DDDDDD;
+}
+
+todo-list footer {
+  border-top: 1px solid #DDDDDD;
+}
+
+li:not(:last-child) {
+  border-bottom: 1px dotted #EEEEEE;
+}
+
+a {
+  text-decoration: none;
+  color: blue;
+}
+
+input:focus {
+  outline: none;
+}
+
+.completed {
+  color: #DDDDDD;
+}
+
+.filter.active {
+  border-bottom: 2px solid red;
+  margin-bottom: -2px;
+}

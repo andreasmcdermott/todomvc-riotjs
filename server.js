@@ -1,6 +1,9 @@
-var express = require('express');
-var app = express();
+var express = require('express')
+var app = express()
 
-app.use(express.static('dist'));
+app.use(express.static('dist'))
 
-app.listen(3000);
+var port = 3000
+app.listen(port, function () {
+  console.log('Server running: http://localhost:' + port)
+})

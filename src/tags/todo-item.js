@@ -30,36 +30,38 @@ const css = sf`
 module.exports = riot.tag('todo-item', 
 `
 <div class="${css}">
-  <input type="checkbox" checked="{item.completed}" onclick="{complete}" />
-  <label hide="{editing}" ondblclick="{edit}" class="{completed: item.completed}">{item.title}</label>
-  <input show="{editing}" name="editInput" type="text" value="{item.title}" onkeyup="{onEdit}" />
+  <input type="checkbox" __checked="{item.completed}" onclick="{onToggleComplete}" />
+  <label hide="{editing}" ondblclick="{onStartEdit}" class="{completed: item.completed}">{item.title}</label>
+  <input show="{editing}" name="editInput" type="text" value="{item.title}" onkeyup="{onEditKeyup}" />
 </div>
 `, 
 function (opts) {
-  this.dispatcher = opts.dispatcher
   this.item = opts.item
   this.editing = false
 
-  this.complete = e => {
+  this.onToggleComplete = e => {
     this.item.completed = e.target.checked
-    this.dispatcher.trigger('todo:updated', this.item)
+    opts.dispatcher.trigger('todo-item:updated', this.item)
   }
 
-  this.edit = e => {
+  this.onStartEdit = e => {
     e.preventDefault()
     this.editing = true
     this.originalTitle = this.item.title
     this.editInput.focus();
   }
 
-  this.onEdit = e => {
-    if (e.which === 27) {
+  const KEY_ESC = 27
+  const KEY_RETURN = 13 
+
+  this.onEditKeyup = e => {
+    if (e.which === KEY_ESC) {
       this.item.title = this.originalTitle
       this.editing = false
-    } else if (e.which === 13) {
+    } else if (e.which === KEY_RETURN) {
       this.item.title = e.target.value.trim()
       this.editing = false
-      this.dispatcher.trigger('todo:updated')
+      opts.dispatcher.trigger('todo-item:updated')
     }
   }
 })
