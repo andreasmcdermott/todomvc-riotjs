@@ -124,6 +124,7 @@ function (opts) {
   this.onClearCompleted = e => {
     e.preventDefault()
     this.items = this.filters.active.func(this.items)
+    opts.store.save(this.items)
   }
 
   this.onAddItem = e => {
