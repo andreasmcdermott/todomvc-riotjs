@@ -11,7 +11,7 @@ Instead it manually creates tags using Riot's API (inspired by [this blog post](
 
 * Uses [Browserify](http://browserify.org/) for bundling files.
 * Uses [Babel](https://babeljs.io/) to transpile from ES6 to ES5.
-** Note: It does not use ES6 modules because Sheetify does not support it.
+  * Note: It does not use ES6 modules because Sheetify does not support it.
 * Uses [Sheetify](https://github.com/stackcss/sheetify) to create scoped css.
 * Includes a simple [Express](https://expressjs.com/) server for running locally.
 
