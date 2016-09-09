@@ -19,7 +19,7 @@ Instead it manually creates tags using Riot's API (inspired by [this blog post](
 1. Clone the repository
 2. "npm install"
 3. "npm run start"
-4. Open "http://localhost:3000"
+4. Open [http://localhost:3000](http://localhost:3000)
 5. ("gulp watch" in new terminal tab)
 6. (Make changes.)
 7. (Refresh browser.)
