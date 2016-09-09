@@ -1,7 +1,7 @@
 # todomvc-riotjs
 TodoMVC-like app created with Riot.
 
-[Live example](https://todomvc-riotjs-fihbzhhdvr.now.sh)
+[Live example](https://todomvc-riotjs-nyudzeraqo.now.sh)
 
 ## About
 This app was written to test/learn Riot. 
