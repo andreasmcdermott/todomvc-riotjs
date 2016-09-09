@@ -2849,6 +2849,7 @@ module.exports = riot.tag('todo-list', '\n<header class="' + headerCss + '">\n  
   this.onClearCompleted = function (e) {
     e.preventDefault();
     _this.items = _this.filters.active.func(_this.items);
+    opts.store.save(_this.items);
   };
 
   this.onAddItem = function (e) {
