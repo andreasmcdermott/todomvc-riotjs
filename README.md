@@ -7,7 +7,7 @@ TodoMVC-like app created with Riot.
 This app was written to test/learn Riot. 
 It was heavily inspired by [TodoMVC](http://todomvc.com) and implements the same features as those apps. 
 It does not use the Riot compiler or Riot's tag-files. 
-Instead it manually creates tags using Riot's API (inspired by [this blog post](http://blog.srackham.com/posts/riot-es6-webpack-apps/).
+Instead it manually creates tags using Riot's API (inspired by [this blog post](http://blog.srackham.com/posts/riot-es6-webpack-apps/)).
 
 * Uses [Browserify](http://browserify.org/) for bundling files.
 * Uses [Babel](https://babeljs.io/) to transpile from ES6 to ES5.
